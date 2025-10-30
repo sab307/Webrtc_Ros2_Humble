@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  devcontainer_1:
+    build: 
+      context: .devcontainer/container_1
+      dockerfile: Dockerfile
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - type: bind
+        source: . 
+        target: /workspace # .. means one level up from .devcontainer/
+    working_dir: /workspace
+    devices:
+      - "/dev/video0:/dev/video0"
+      - "/dev/video2:/dev/video2"
+      - "/dev/video4:/dev/video4" 
+    environment:
+      - DISPLAY=:1
+      - XAUTHORITY=${XAUTHORITY:-/tmp/.docker.xauth}
+      - QT_X11_NO_MITSHM=1
+      - XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR
+    user: root
+    command: bash
+    tty: true
+    stdin_open: true
+    network_mode: host
