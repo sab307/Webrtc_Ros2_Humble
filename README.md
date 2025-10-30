@@ -12,7 +12,9 @@ source install/setup.bash
 
 ## The usb_cam package
 The launch file camera.launch.py is important.
-Besidess that params_1.yaml or params_2.yaml needs to be considered.
+
+Besides that params_1.yaml or params_2.yaml needs to be considered.
+
 These params are responsible for the camera data format.
 ``` bash
 ros2 launch usb_cam camera.launch.py
@@ -26,5 +28,6 @@ chmod a+x server.py
 python3 server.py #launches the webrtc streaming for /camera1/image_raw topic
 ```
 For now, the processing power for this web streaming is too much 3.3GHz almost.
+
 Trying to reduce that! Experimentation is on!
 
