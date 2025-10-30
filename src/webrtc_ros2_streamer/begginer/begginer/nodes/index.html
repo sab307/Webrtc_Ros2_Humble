@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ROS2 WebRTC Camera Stream</title>
+
+<style>
+
+* {
+
+margin: 0;
+
+padding: 0;
+
+box-sizing: border-box;
+
+}
+
+
+
+body {
+
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+min-height: 100vh;
+
+padding: 20px;
+
+}
+
+
+
+.container {
+
+max-width: 1200px;
+
+margin: 0 auto;
+
+background: white;
+
+border-radius: 20px;
+
+padding: 30px;
+
+box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+}
+
+
+
+h1 {
+
+color: #333;
+
+text-align: center;
+
+margin-bottom: 30px;
+
+}
+
+
+
+.video-container {
+
+position: relative;
+
+background: #000;
+
+border-radius: 10px;
+
+overflow: hidden;
+
+margin-bottom: 20px;
+
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+}
+
+
+
+video {
+
+width: 100%;
+
+height: auto;
+
+display: block;
+
+min-height: 400px;
+
+}
+
+
+
+.controls {
+
+display: flex;
+
+gap: 10px;
+
+justify-content: center;
+
+margin-bottom: 30px;
+
+}
+
+
+
+button {
+
+padding: 15px 40px;
+
+font-size: 16px;
+
+font-weight: 600;
+
+border: none;
+
+border-radius: 8px;
+
+cursor: pointer;
+
+transition: all 0.3s ease;
+
+text-transform: uppercase;
+
+}
+
+
+
+#start {
+
+background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+color: white;
+
+}
+
+
+
+#start:hover {
+
+transform: translateY(-2px);
+
+box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+
+}
+
+
+
+#stop {
+
+background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+
+color: white;
+
+}
+
+
+
+#stop:hover {
+
+transform: translateY(-2px);
+
+box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+
+}
+
+
+
+.metrics {
+
+display: grid;
+
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+gap: 20px;
+
+margin-bottom: 30px;
+
+}
+
+
+
+.metric-card {
+
+background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+
+padding: 20px;
+
+border-radius: 10px;
+
+text-align: center;
+
+}
+
+
+
+.metric-label {
+
+font-size: 14px;
+
+color: #666;
+
+text-transform: uppercase;
+
+letter-spacing: 1px;
+
+margin-bottom: 10px;
+
+}
+
+
+
+.metric-value {
+
+font-size: 36px;
+
+font-weight: bold;
+
+color: #333;
+
+}
+
+
+
+.metric-unit {
+
+font-size: 16px;
+
+color: #999;
+
+margin-left: 5px;
+
+}
+
+
+
+.status {
+
+background: #f8f9fa;
+
+border-radius: 10px;
+
+padding: 20px;
+
+margin-bottom: 20px;
+
+}
+
+
+
+.status h2 {
+
+color: #333;
+
+font-size: 1.2em;
+
+margin-bottom: 15px;
+
+}
+
+
+
+.status-item {
+
+display: flex;
+
+justify-content: space-between;
+
+padding: 10px;
+
+margin-bottom: 10px;
+
+background: white;
+
+border-radius: 5px;
+
+border-left: 4px solid #667eea;
+
+}
+
+
+
+.status-label {
+
+font-weight: 600;
+
+color: #555;
+
+}
+
+
+
+.status-value {
+
+font-family: 'Courier New', monospace;
+
+color: #333;
+
+}
+
+
+
+.info-box {
+
+background: #e3f2fd;
+
+border-left: 4px solid #2196F3;
+
+padding: 15px;
+
+border-radius: 5px;
+
+margin-top: 20px;
+
+}
+
+
+
+.info-box p {
+
+margin: 5px 0;
+
+color: #1565C0;
+
+}
+
+
+
+.quality-indicator {
+
+display: inline-block;
+
+width: 12px;
+
+height: 12px;
+
+border-radius: 50%;
+
+margin-left: 10px;
+
+vertical-align: middle;
+
+}
+
+
+
+.quality-excellent { background: #4caf50; box-shadow: 0 0 10px #4caf50; }
+
+.quality-good { background: #8bc34a; }
+
+.quality-fair { background: #ffc107; }
+
+.quality-poor { background: #ff9800; }
+
+.quality-bad { background: #f44336; box-shadow: 0 0 10px #f44336; }
+
+
+
+@media (max-width: 768px) {
+
+.container {
+
+padding: 15px;
+
+}
+
+
+.controls {
+
+flex-direction: column;
+
+}
+
+
+button {
+
+width: 100%;
+
+}
+
+
+.metrics {
+
+grid-template-columns: 1fr;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🎥 ROS2 WebRTC Camera Stream</h1>
+
+
+<div class="video-container">
+
+<video id="video" autoplay playsinline></video>
+
+</div>
+
+
+
+<div class="controls">
+
+<button id="start">▶ Start Stream</button>
+
+<button id="stop">⏹ Stop Stream</button>
+
+</div>
+
+
+
+<div class="metrics">
+
+<div class="metric-card">
+
+<div class="metric-label">Round Trip Time</div>
+
+<div class="metric-value">
+
+<span id="rtt-value">--</span>
+
+<span class="metric-unit">ms</span>
+
+<span class="quality-indicator" id="rtt-indicator"></span>
+
+</div>
+
+</div>
+
+
+
+<div class="metric-card">
+
+<div class="metric-label">Frame Rate</div>
+
+<div class="metric-value">
+
+<span id="fps-value">--</span>
+
+<span class="metric-unit">fps</span>
+
+</div>
+
+</div>
+
+
+
+<div class="metric-card">
+
+<div class="metric-label">Packets Received</div>
+
+<div class="metric-value">
+
+<span id="packets-value">--</span>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<div class="status">
+
+<h2>Connection Status</h2>
+
+<div class="status-item">
+
+<span class="status-label">ICE Gathering State:</span>
+
+<span class="status-value" id="ice-gathering-state">new</span>
+
+</div>
+
+<div class="status-item">
+
+<span class="status-label">ICE Connection State:</span>
+
+<span class="status-value" id="ice-connection-state">new</span>
+
+</div>
+
+<div class="status-item">
+
+<span class="status-label">Signaling State:</span>
+
+<span class="status-value" id="signaling-state">stable</span>
+
+</div>
+
+<div class="status-item">
+
+<span class="status-label">Data Channel:</span>
+
+<span class="status-value" id="data-channel">closed</span>
+
+</div>
+
+</div>
+
+
+
+<div class="info-box">
+
+<p><strong>ℹ️ Quick Start:</strong></p>
+
+<p>1. Make sure your camera is publishing: <code>ros2 topic hz /camera/image_raw</code></p>
+
+<p>2. Click "Start Stream" to begin</p>
+
+<p>3. Monitor RTT (latency) - Green is excellent, Red is poor</p>
+
+<p>4. Press F12 to open browser console for detailed logs</p>
+
+</div>
+
+</div>
+
+
+
+<script src="client.js"></script>
+
+</body>
+
+</html>
