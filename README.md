@@ -2,13 +2,13 @@
 A basic implementation of webrtc on ros2 humble camera topic.
 
 ## Sourcing
-´´´
+``` bash
 source /opt/ros/humble/setup.bash
 sudo apt-get update
 rosdep install -i -y --from-paths src --rosdistro humble
 colcon build
 source install/setup.bash
-´´´
+```
 
 ## The usb_cam package
 The launch file camera.launch.py is important.
