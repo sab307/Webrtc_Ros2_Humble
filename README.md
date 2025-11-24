@@ -30,4 +30,6 @@ python3 server.py #launches the webrtc streaming for /camera1/image_raw topic
 For now, the processing power for this web streaming is too much 3.3GHz almost.
 
 Trying to reduce that! Experimentation is on!
-
+``` bash
+python3 webrtc_websocket.py --receiver-ip localhost --receiver-port 8080 --camera-topic /camera1/image_raw
+```
