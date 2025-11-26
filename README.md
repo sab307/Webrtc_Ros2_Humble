@@ -34,3 +34,6 @@ Trying to reduce that! Experimentation is on!
 python3 webrtc_websocket.py --receiver-ip localhost --receiver-port 8080 --camera-topic /camera1/image_raw
 ```
 The folder webrtc_websocket_sender is an attempt to make the code more readable and modular.
+``` bash
+python3 webrtc_websocket_sender.main --receiver-ip localhost --receiver-port 8080 --camera-topic /camera1/image_raw
+```
